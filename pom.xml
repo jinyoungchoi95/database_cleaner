@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ori</groupId>
     <artifactId>databasecleaner</artifactId>
-    <version>1.0.0</version>
+    <version>3.0.0</version>
     <name>databasecleaner</name>
     <description>Demo project for Spring Boot</description>
     <properties>
