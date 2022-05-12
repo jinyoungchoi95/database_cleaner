@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.ori'
-version = '1.8.0'
+version = '1.9.0'
 sourceCompatibility = '11'
 
 repositories {
@@ -25,8 +25,8 @@ tasks.named('test') {
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            from components.java
+        mavenJava(MavenPublication) {
+            artifact bootJar
         }
     }
 }
