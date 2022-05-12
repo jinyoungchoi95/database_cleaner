@@ -23,14 +23,6 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact bootJar
-        }
-    }
-}
-
 jar {
     enabled = false;
 }
