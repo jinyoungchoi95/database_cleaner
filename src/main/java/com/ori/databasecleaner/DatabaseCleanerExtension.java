@@ -41,13 +41,19 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
     }
 
     private void executeResetTableQuery(final JdbcTemplate jdbcTemplate, final ResultSet rs) throws SQLException {
+        System.out.println(1);
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+        System.out.println(2);
         while (rs.next()) {
+            System.out.println(11);
             String tableName = rs.getString("TABLE_NAME");
             jdbcTemplate.execute(createTruncateTableQuery(tableName));
+            System.out.println(22);
             jdbcTemplate.execute(createResetAutoIncrementQuery(tableName));
+            System.out.println(33);
         }
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
+        System.out.println(4);
     }
 
     private String createTruncateTableQuery(final String tableName) {
