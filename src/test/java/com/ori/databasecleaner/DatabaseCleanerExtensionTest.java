@@ -14,37 +14,55 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 
-//@SpringBootTest
-//@ExtendWith(DatabaseCleanerExtension.class)
-//@TestMethodOrder(OrderAnnotation.class)
+@SpringBootTest
+@ExtendWith(DatabaseCleanerExtension.class)
+@TestMethodOrder(OrderAnnotation.class)
 class DatabaseCleanerExtensionTest {
 
-//    @Autowired
-//    private JdbcTemplate jdbcTemplate;
-//
-//    @Test
-//    @Order(1)
-//    @DisplayName("table을 세팅하고 데이터를 삽입한다.")
-//    void setUpTableAndInsertData() {
-//        jdbcTemplate.execute("DROP TABLE station IF EXISTS");
-//        jdbcTemplate.execute("DROP TABLE line IF EXISTS");
-//        jdbcTemplate.execute("DROP TABLE section IF EXISTS");
-//
-//        jdbcTemplate.execute("CREATE TABLE station (id int auto_increment, name varchar(10));");
-//        jdbcTemplate.execute("CREATE TABLE line (id int auto_increment);");
-//        jdbcTemplate.execute("CREATE TABLE section (id int auto_increment);");
-//
-//        jdbcTemplate.update("insert into station (name) values ('name')");
-//
-//        boolean isExistsFeild = jdbcTemplate.queryForObject("select exists (select * from station)", Boolean.class);
-//        assertThat(isExistsFeild).isTrue();
-//    }
-//
-//    @Test
-//    @Order(2)
-//    @DisplayName("truncate 실행으로 테이블 데이터가 존재하지 않는다.")
-//    void tableIsCleared() {
-//        boolean isExistsFeild = jdbcTemplate.queryForObject("select exists (select * from station)", Boolean.class);
-//        assertThat(isExistsFeild).isFalse();
-//    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Test
+    @Order(1)
+    @DisplayName("table을 세팅하고 데이터를 삽입한다.")
+    void setUpTableAndInsertData() {
+        jdbcTemplate.execute("DROP TABLE section IF EXISTS");
+        jdbcTemplate.execute("DROP TABLE station IF EXISTS");
+        jdbcTemplate.execute("DROP TABLE line IF EXISTS");
+
+        jdbcTemplate.execute("CREATE TABLE STATION\n"
+                + "(\n"
+                + "    id   bigint auto_increment not null,\n"
+                + "    name varchar(255)          not null unique,\n"
+                + "    primary key (id)\n"
+                + ");");
+        jdbcTemplate.execute("CREATE TABLE LINE\n"
+                + "(\n"
+                + "    id    bigint auto_increment not null,\n"
+                + "    name  varchar(255)          not null unique,\n"
+                + "    color varchar(20)           not null,\n"
+                + "    primary key (id)\n"
+                + ");");
+        jdbcTemplate.execute("create table SECTION\n"
+                + "(\n"
+                + "    id              bigint auto_increment not null,\n"
+                + "    up_station_id   bigint                not null,\n"
+                + "    primary key (id),\n"
+                + "    foreign key (up_station_id) references station (id)"
+                + ");");
+
+        jdbcTemplate.update("insert into station (name) values ('name')");
+        jdbcTemplate.update("insert into section (up_station_id) values (1)");
+
+        boolean isExistsFeild = jdbcTemplate.queryForObject("select exists (select * from station)", Boolean.class);
+        assertThat(isExistsFeild).isTrue();
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("truncate 실행으로 테이블 데이터가 존재하지 않는다.")
+    void tableIsCleared() {
+        boolean isExistsFeild = jdbcTemplate.queryForObject("select exists (select * from station)", Boolean.class);
+        assertThat(isExistsFeild).isFalse();
+    }
 }

@@ -1,8 +1,11 @@
 package com.ori.databasecleaner;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -30,12 +33,19 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
     }
 
     private void executeResetTableQuery(final JdbcTemplate jdbcTemplate, final ResultSet rs) throws SQLException {
+        Statement statement =  jdbcTemplate.getDataSource()
+                .getConnection()
+                .createStatement();
+        statement.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
+
         while (rs.next()) {
             String tableName = rs.getString("TABLE_NAME");
-
-            jdbcTemplate.execute(createTruncateTableQuery(tableName));
-            jdbcTemplate.execute(createResetAutoIncrementQuery(tableName));
+            System.out.println(tableName);
+            statement.addBatch(createTruncateTableQuery(tableName));
+            statement.addBatch(createResetAutoIncrementQuery(tableName));
         }
+        statement.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
+        statement.executeBatch();
     }
 
     private String createTruncateTableQuery(final String tableName) {
