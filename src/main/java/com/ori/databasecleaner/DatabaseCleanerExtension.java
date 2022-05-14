@@ -10,10 +10,12 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 public class DatabaseCleanerExtension implements AfterEachCallback {
 
     @Override
+    @Transactional
     public void afterEach(final ExtensionContext context) {
         ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
         try {
@@ -31,19 +33,13 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
     }
 
     private void executeResetTableQuery(final JdbcTemplate jdbcTemplate, final ResultSet rs) throws SQLException {
-        Statement statement = Objects.requireNonNull(jdbcTemplate.getDataSource())
-                .getConnection()
-                .createStatement();
-
-        statement.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
-
+        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
         while (rs.next()) {
             String tableName = rs.getString("TABLE_NAME");
-            statement.addBatch(createTruncateTableQuery(tableName));
-            statement.addBatch(createResetAutoIncrementQuery(tableName));
+            jdbcTemplate.execute(createTruncateTableQuery(tableName));
+            jdbcTemplate.execute(createResetAutoIncrementQuery(tableName));
         }
-        statement.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
-        statement.executeBatch();
+        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
 
     private String createTruncateTableQuery(final String tableName) {
