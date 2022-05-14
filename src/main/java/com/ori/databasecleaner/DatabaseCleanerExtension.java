@@ -19,15 +19,21 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
     public void afterEach(final ExtensionContext context) {
         ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
         try {
+            System.out.println(1);
             JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
+            System.out.println(2);
             DatabaseMetaData metaData = Objects.requireNonNull(jdbcTemplate.getDataSource())
                     .getConnection()
                     .getMetaData();
+            System.out.println(2);
             String[] types = {"TABLE"};
             ResultSet rs = metaData.getTables(null, null, "%", types);
 
+            System.out.println(2);
             executeResetTableQuery(jdbcTemplate, rs);
         } catch (Exception exception) {
+            System.out.println(3);
+            System.out.println(exception.getMessage());
             throw new RuntimeException();
         }
     }
