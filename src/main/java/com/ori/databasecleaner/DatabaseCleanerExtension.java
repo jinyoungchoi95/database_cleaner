@@ -25,15 +25,17 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
             DatabaseMetaData metaData = Objects.requireNonNull(jdbcTemplate.getDataSource())
                     .getConnection()
                     .getMetaData();
-            System.out.println(2);
+            System.out.println(3);
             String[] types = {"TABLE"};
             ResultSet rs = metaData.getTables(null, null, "%", types);
 
-            System.out.println(2);
+            System.out.println(4);
             executeResetTableQuery(jdbcTemplate, rs);
+            System.out.println(5);
         } catch (Exception exception) {
-            System.out.println(3);
+            System.out.println(6);
             System.out.println(exception.getMessage());
+            System.out.println(7);
             throw new RuntimeException();
         }
     }
