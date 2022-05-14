@@ -1,8 +1,6 @@
 package com.ori.databasecleaner;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -33,14 +31,14 @@ public class DatabaseCleanerExtension implements AfterEachCallback {
     }
 
     private void executeResetTableQuery(final JdbcTemplate jdbcTemplate, final ResultSet rs) throws SQLException {
-        Statement statement =  jdbcTemplate.getDataSource()
+        Statement statement = Objects.requireNonNull(jdbcTemplate.getDataSource())
                 .getConnection()
                 .createStatement();
+
         statement.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
 
         while (rs.next()) {
             String tableName = rs.getString("TABLE_NAME");
-            System.out.println(tableName);
             statement.addBatch(createTruncateTableQuery(tableName));
             statement.addBatch(createResetAutoIncrementQuery(tableName));
         }
