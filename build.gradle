@@ -1,38 +1,30 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
-
-group = 'com.ori'
-version = '2.1.0'
-sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'com.h2database:h2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '2.6.7'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.6.7'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                artifact bootJar
-            }
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.ori'
+            artifactId = 'database-cleaner'
+            version = '1.0'
+
+            from components.java
         }
     }
-}
-
-jar {
-    enabled = false
 }
