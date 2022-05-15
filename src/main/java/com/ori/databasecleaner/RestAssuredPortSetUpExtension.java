@@ -3,15 +3,26 @@ package com.ori.databasecleaner;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-public class RestAssuredPortSetUpExtension implements BeforeEachCallback {
+class RestAssuredPortSetUpExtension implements BeforeEachCallback {
 
-    @LocalServerPort
-    int port;
+    private static final String LOCAL_SERVER_PORT_PATH = "local.server.port";
 
     @Override
-    public void beforeEach(final ExtensionContext context) throws Exception {
-        RestAssured.port = port;
+    public void beforeEach(final ExtensionContext context) {
+        ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
+        String port = applicationContext.getEnvironment()
+                .getProperty(LOCAL_SERVER_PORT_PATH);
+        RestAssured.port = parseToIntegr(port);
+    }
+
+    private int parseToIntegr(final String port) {
+        try {
+            return Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("port parsing error");
+        }
     }
 }

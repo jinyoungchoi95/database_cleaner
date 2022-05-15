@@ -2,6 +2,8 @@ package com.ori.databasecleaner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -16,6 +18,11 @@ class SpringBootAcceptanceTests {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @AfterEach
+    void restAssuredPortIsPositive() {
+        assertThat(RestAssured.port).isPositive();
+    }
 
     @Test
     @Order(1)
