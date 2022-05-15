@@ -10,6 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(DatabaseCleanerExtension.class)
+@ExtendWith({DatabaseCleanerExtension.class, RestAssuredPortSetUpExtension.class})
 public @interface SpringBootAcceptanceTest {
 }
